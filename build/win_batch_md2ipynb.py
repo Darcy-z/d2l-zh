@@ -15,15 +15,12 @@ def mkdir_if_not_exist(path):
         os.makedirs(os.path.join(*path))
 
 # Timeout for each notebook, in sec
-timeout = 60 * 60
+timeout = 30 * 60
 
 # The files will be ingored for execution
 ignore_execution = ['chapter_computational-performance/async-computation.md']
 
 reader = notedown.MarkdownReader(match='strict')
-
-do_eval = int(os.environ.get('EVAL', True))
-
 
 for chap in glob.glob(os.path.join('..', 'chapter_*')):
     mkdir_if_not_exist(['win_ipynb', chap[3:]])
@@ -40,7 +37,7 @@ for chap in glob.glob(os.path.join('..', 'chapter_*')):
                 with open(in_md, 'r', encoding="utf8") as f:
                     notebook = reader.read(f)
 
-                if do_eval and chap[3:] + '/' + md not in ignore_execution:
+                if chap[3:] + '/' + md not in ignore_execution:
                     tic = time.time()
                     notedown.run(notebook, timeout)
                     print('=== Finished evaluation in %f sec'%(time.time()-tic))
@@ -51,5 +48,3 @@ for chap in glob.glob(os.path.join('..', 'chapter_*')):
 
                 with open(out_nb, 'w', encoding="utf8") as f:
                     f.write(nbformat.writes(notebook))
-
-
